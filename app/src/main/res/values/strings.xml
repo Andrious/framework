@@ -1,0 +1,58 @@
+<resources>
+    <!--
+         Copyright  2017  Andrious Solutions Ltd.
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    -->
+    <string name="app_name">Framework</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="send">Send</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="settings">Settings</string>
+    <string name="legal">Legal Notices</string>
+    <string name="help">Help</string>
+    <string name="about">About</string>
+
+    <!-- Preferences -->
+    <string name="interface_preferences">interface preferences</string>
+
+    <string name="left_handed">Switch around dialog buttons</string>
+    <string name="summary_left_handed">Switch around buttons on dialog windows. Possibly preferred by left-handed people.</string>
+
+    <string name="notification_preferences">Notification Preferences</string>
+
+    <string name="show_notifications">Show Notifications</string>
+    <string name="summary_show_notifications">Show Notifications Messages</string>
+
+    <string name="notification_settings">Notification Settings</string>
+    <string name="summary_notification_preferences">Notification behaviour, popup settings and LED Colour</string>
+
+    <string name="use_LED">Use LED for Notification</string>
+    <string name="summary_use_LED">Check to use the phones LED during item notification.</string>
+
+    <string name="no_LED">Your phone does not use LED Notification.\r\nHence, this option is disabled.</string>
+
+    <string name="colour_preference">LED Colour Preference</string>
+    <string name="summary_colour_preference">Setting the LED colour used during notification</string>
+
+    <string name="notification_sound">Notification Sound Settings</string>
+    <string name="summary_notification_sound">Select the notification sound</string>
+
+    <string name="admob_id">ca-app-pub-3940256099942544/6300978111</string>
+</resources>
