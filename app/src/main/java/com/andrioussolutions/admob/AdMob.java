@@ -34,7 +34,7 @@ import static android.content.Context.LOCATION_SERVICE;
  *
  * Created  01 Jul 2017
  */
-public class AdMod{
+public class AdMob{
 
     private static final String TEST_ADMOD_ID = "ca-app-pub-3940256099942544/6300978111";
 
@@ -52,8 +52,15 @@ public class AdMod{
 
     private HashSet<AdListener> mAdListeners = new HashSet<>();
 
-    //TODO Add the other ones later.
     private HashSet<OnAdClosedListener> mOnAdClosedListeners = new HashSet<>();
+
+    private HashSet<OnAdFailedToLoadListener> mOnAdFailedToLoadListeners = new HashSet<>();
+
+    private HashSet<OnAdLeftApplicationListener> mOnAdLeftApplicationListeners = new HashSet<>();
+
+    private HashSet<OnAdOpenedListener> mOnAdOpenedListeners = new HashSet<>();
+
+    private HashSet<OnAdLoadedListener> mOnAdLoadedListeners = new HashSet<>();
 
     private boolean mLocalLocation;
 
@@ -66,7 +73,7 @@ public class AdMod{
 
 
 
-    public AdMod(Context context){
+    public AdMob(Context context){
 
         // Initialize the Mobile Ads SDK.
         this(context, TEST_ADMOD_ID);
@@ -75,7 +82,7 @@ public class AdMod{
 
 
 
-    public AdMod(Context context, String AdModID){
+    public AdMob(Context context, String AdModID){
 
         // Initialize the Mobile Ads SDK.
         MobileAds.initialize(context, AdModID);
@@ -90,7 +97,7 @@ public class AdMod{
 
 
 
-    public AdMod(Context context, String AdModID, @IdRes int ResId){
+    public AdMob(Context context, String AdModID, @IdRes int ResId){
 
         this(context, AdModID);
 
@@ -100,7 +107,7 @@ public class AdMod{
 
 
 
-    public AdMod(Context context, @StringRes int AdModID){
+    public AdMob(Context context, @StringRes int AdModID){
 
         this(context, App.getController().getResources().getString(AdModID));
     }
@@ -108,7 +115,7 @@ public class AdMod{
 
 
 
-    public AdMod(Context context, @StringRes int AdModID, @IdRes int ResId){
+    public AdMob(Context context, @StringRes int AdModID, @IdRes int ResId){
 
         this(context, AdModID);
 
@@ -193,8 +200,6 @@ public class AdMod{
 
         if (mAdView == null) return;
 
-        if (!isEnabled()) return;
-
         mAdView.loadAd(getAdRequest());
 
         mAdWrapper.setAdListener();
@@ -205,9 +210,15 @@ public class AdMod{
 
     public void loadAd(@IdRes int ResId){
 
-        setAdView(ResId);
+        if (!isEnabled()) return;
 
-        loadAd();
+        // No need to load again and again if done once already.
+        if (mAdView == null){
+
+            setAdView(ResId);
+
+            loadAd();
+        }
     }
 
 
@@ -296,6 +307,62 @@ public class AdMod{
         mOnAdClosedListeners.remove(listener);
     }
 
+
+
+    public void addOnAdFailedToLoad(@NonNull OnAdFailedToLoadListener listener){
+
+        mOnAdFailedToLoadListeners.add(listener);
+    }
+
+
+
+    public void removeOnAdFailedToLoad(@NonNull OnAdFailedToLoadListener listener){
+
+        mOnAdFailedToLoadListeners.remove(listener);
+    }
+
+
+
+    public void addOnAdLeftApplication(@NonNull OnAdLeftApplicationListener listener){
+
+        mOnAdLeftApplicationListeners.add(listener);
+    }
+
+
+
+    public void removeOnAdLeftApplication(@NonNull OnAdLeftApplicationListener listener){
+
+        mOnAdLeftApplicationListeners.remove(listener);
+    }
+
+
+
+    public void addOnAdOpened(@NonNull OnAdOpenedListener listener){
+
+        mOnAdOpenedListeners.add(listener);
+    }
+
+
+
+
+    public void removeOnAdOpened(@NonNull OnAdOpenedListener listener){
+
+        mOnAdOpenedListeners.remove(listener);
+    }
+
+
+
+    public void addOnAdLoaded(@NonNull OnAdLoadedListener listener){
+
+        mOnAdLoadedListeners.add(listener);
+    }
+
+
+
+    public void removeOnAdLoaded(@NonNull OnAdLoadedListener listener){
+
+        mOnAdLoadedListeners.remove(listener);
+    }
 
 
 
@@ -432,6 +499,13 @@ public class AdMod{
         mAdWrapper = null;
 
         if (mAdView != null){ mAdView.destroy(); }
+
+        mAdListeners = null;
+        mOnAdClosedListeners = null;
+        mOnAdFailedToLoadListeners = null;
+        mOnAdLeftApplicationListeners = null;
+        mOnAdOpenedListeners = null;
+        mOnAdLoadedListeners = null;
     }
 
 
@@ -449,6 +523,35 @@ public class AdMod{
     public interface OnAdClosedListener{
 
         void onAdClosed();
+    }
+
+
+    // Interface to run code when an ad request fails.
+    public interface OnAdFailedToLoadListener{
+
+        void onAdFailedToLoad(int var1);
+    }
+
+
+    // Interface to run code when the user has left the app.
+    // This method is invoked after onAdOpened(),
+    public interface OnAdLeftApplicationListener{
+
+        void onAdLeftApplication();
+    }
+
+
+    // Interface to run code when an ad opens an overlay that covers the screen.
+    public interface OnAdOpenedListener{
+
+        void onAdOpened();
+    }
+
+
+    // Interface to run code when an ad finishes loading.
+    public interface OnAdLoadedListener{
+
+        void onAdLoaded();
     }
 
     // Stuff that has to run within the App when dealing with AdMods.
@@ -547,8 +650,7 @@ public class AdMod{
         @Override
         public void onAdOpened(){
 
-            // Code to be executed when an ad opens an overlay that
-            // covers the screen.
+            // Code to be executed when an ad opens an overlay that covers the screen.
             //  If you're using an analytics package to track clickthroughs, this is a good place to record one.
         }
 
@@ -613,6 +715,11 @@ public class AdMod{
 
                         listener.onAdLoaded();
                     }
+
+                    for (OnAdLoadedListener listener : mOnAdLoadedListeners){
+
+                        listener.onAdLoaded();
+                    }                    
                 }
 
 
@@ -628,6 +735,11 @@ public class AdMod{
 
                         listener.onAdFailedToLoad(error);
                     }
+
+                    for (OnAdFailedToLoadListener listener : mOnAdFailedToLoadListeners){
+
+                        listener.onAdFailedToLoad(error);
+                    }
                 }
 
 
@@ -640,6 +752,11 @@ public class AdMod{
                     if (mListener != null){ mListener.onAdOpened(); }
 
                     for (AdListener listener : mAdListeners){
+
+                        listener.onAdOpened();
+                    }
+
+                    for (OnAdOpenedListener listener : mOnAdOpenedListeners){
 
                         listener.onAdOpened();
                     }
@@ -675,6 +792,11 @@ public class AdMod{
                     if (mListener != null){ mListener.onAdLeftApplication(); }
 
                     for (AdListener listener : mAdListeners){
+
+                        listener.onAdLeftApplication();
+                    }
+
+                    for (OnAdLeftApplicationListener listener : mOnAdLeftApplicationListeners){
 
                         listener.onAdLeftApplication();
                     }
